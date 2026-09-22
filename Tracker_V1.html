@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vishwajeet · AI Learning Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+  :root{
+    --bg:#0a0e1a; --panel:#151c2e; --panel-2:#1b2438;
+    --line:#26314a; --line-2:#33405e;
+    --txt:#eef2ff; --txt-2:#9aa8c2; --txt-3:#5f6d88;
+    --accent:#7c5cff; --accent-2:#22d3ee; --accent-3:#f472b6;
+    --basic:#94a3b8; --medium:#3b82f6; --max:#10b981;
+    --shadow:0 10px 30px rgba(0,0,0,.45);
+    --r:14px; --r-lg:20px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Inter',system-ui,sans-serif;color:var(--txt);min-height:100vh;
+    background:
+      radial-gradient(1200px 600px at 10% -10%, rgba(124,92,255,.18), transparent 60%),
+      radial-gradient(1000px 500px at 100% 0%, rgba(34,211,238,.12), transparent 55%),
+      radial-gradient(800px 400px at 50% 120%, rgba(244,114,182,.10), transparent 60%),
+      var(--bg);
+    background-attachment:fixed;padding:28px 20px 80px;line-height:1.5;
+  }
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:#2a3550;border-radius:10px}
+  .wrap{max-width:1480px;margin:0 auto}
+
+  /* HEADER */
+  .top{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:flex-end;margin-bottom:20px}
+  .brand h1{
+    font-size:clamp(1.5rem,2.6vw,2.2rem);font-weight:800;letter-spacing:-.03em;
+    background:linear-gradient(135deg,#fff 10%,#9aa8c2 90%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    display:flex;align-items:center;gap:12px;
+  }
+  .brand h1 .logo{
+    width:44px;height:44px;border-radius:14px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:grid;place-items:center;color:#fff;font-size:1.2rem;
+    box-shadow:0 8px 24px rgba(124,92,255,.45);
+  }
+  .brand p{color:var(--txt-2);font-size:.86rem;margin-top:6px}
+  .legend{display:flex;gap:10px;background:rgba(21,28,46,.7);border:1px solid var(--line);padding:8px 16px;border-radius:40px;backdrop-filter:blur(8px)}
+  .legend span{display:flex;align-items:center;gap:6px;font-size:.76rem;color:var(--txt-2);font-weight:500}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .dot.basic{background:var(--basic);box-shadow:0 0 8px var(--basic)}
+  .dot.medium{background:var(--medium);box-shadow:0 0 8px var(--medium)}
+  .dot.max{background:var(--max);box-shadow:0 0 8px var(--max)}
+
+  /* SEARCH BAR */
+  .search-section{
+    background:linear-gradient(180deg, rgba(21,28,46,.9), rgba(21,28,46,.6));
+    border:1px solid var(--line);border-radius:var(--r-lg);
+    padding:16px 20px;margin-bottom:24px;
+    display:flex;flex-wrap:wrap;gap:14px;align-items:center;
+    backdrop-filter:blur(8px);box-shadow:var(--shadow);
+  }
+  .search-box{
+    position:relative;flex:1;min-width:240px;
+  }
+  .search-box i{
+    position:absolute;left:16px;top:50%;transform:translateY(-50%);
+    color:var(--txt-3);font-size:.9rem;pointer-events:none;transition:.2s;
+  }
+  .search-box input{
+    width:100%;background:var(--bg);border:1.5px solid var(--line-2);
+    border-radius:12px;padding:12px 44px 12px 44px;
+    color:var(--txt);font-family:inherit;font-size:.9rem;outline:none;transition:.2s;
+  }
+  .search-box input::placeholder{color:var(--txt-3)}
+  .search-box input:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(124,92,255,.2);
+  }
+  .search-box input:focus + i, .search-box:focus-within i{color:var(--accent)}
+  .search-clear{
+    position:absolute;right:10px;top:50%;transform:translateY(-50%);
+    background:transparent;border:none;color:var(--txt-3);cursor:pointer;
+    width:30px;height:30px;border-radius:8px;display:none;place-items:center;
+    transition:.2s;font-size:.85rem;
+  }
+  .search-clear:hover{background:var(--panel-2);color:var(--txt)}
+  .search-clear.on{display:grid}
+
+  .filter-group{display:flex;gap:8px;flex-wrap:wrap}
+  .filter-chip{
+    background:var(--bg);border:1.5px solid var(--line-2);color:var(--txt-2);
+    padding:8px 14px;border-radius:10px;font-size:.78rem;font-weight:600;
+    cursor:pointer;font-family:inherit;transition:.2s;
+    display:flex;align-items:center;gap:6px;
+  }
+  .filter-chip:hover{border-color:var(--accent);color:var(--txt)}
+  .filter-chip.active{background:linear-gradient(135deg,var(--accent),#5b3ff0);border-color:transparent;color:#fff}
+  .filter-chip .cdot{width:7px;height:7px;border-radius:50%}
+  .filter-chip[data-filter="Basic"] .cdot{background:var(--basic)}
+  .filter-chip[data-filter="Medium"] .cdot{background:var(--medium)}
+  .filter-chip[data-filter="Max"] .cdot{background:var(--max)}
+  .filter-chip[data-filter="none"] .cdot{background:var(--txt-3)}
+
+  .search-results-info{
+    font-size:.8rem;color:var(--txt-3);font-weight:500;
+    padding-left:6px;white-space:nowrap;
+  }
+  .search-results-info strong{color:var(--accent-2);font-weight:700}
+
+  /* STATS */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:30px}
+  .stat{
+    background:linear-gradient(180deg,rgba(21,28,46,.9),rgba(21,28,46,.55));
+    border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;
+    display:flex;align-items:center;gap:14px;transition:.25s;
+  }
+  .stat:hover{transform:translateY(-2px);border-color:var(--line-2);box-shadow:var(--shadow)}
+  .stat i{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:1rem}
+  .ic-1{background:rgba(124,92,255,.15);color:var(--accent)}
+  .ic-2{background:rgba(34,211,238,.15);color:var(--accent-2)}
+  .ic-3{background:rgba(16,185,129,.15);color:var(--max)}
+  .ic-4{background:rgba(244,114,182,.15);color:var(--accent-3)}
+  .num{font-size:1.5rem;font-weight:800;line-height:1}
+  .lbl{font-size:.72rem;color:var(--txt-3);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-top:4px}
+  .progress-bar{height:6px;background:#1b2438;border-radius:20px;overflow:hidden;margin-top:8px}
+  .progress-bar > div{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .4s ease;border-radius:20px}
+
+  /* CATEGORY */
+  .cat{margin-bottom:34px}
+  .cat.hidden{display:none}
+  .cat-head{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+  .cat-head .ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
+    background:linear-gradient(135deg,rgba(124,92,255,.2),rgba(34,211,238,.15));
+    color:var(--accent-2);border:1px solid var(--line);}
+  .cat-head h2{font-size:1.05rem;font-weight:700}
+  .cat-head .count{margin-left:auto;font-size:.72rem;color:var(--txt-3);background:var(--panel);border:1px solid var(--line);padding:4px 12px;border-radius:20px;font-weight:600}
+  .cat-head .add-btn{background:linear-gradient(135deg,var(--accent),#5b3ff0);border:none;color:#fff;
+    padding:8px 16px;border-radius:10px;font-size:.78rem;font-weight:600;cursor:pointer;
+    display:flex;align-items:center;gap:6px;transition:.2s;font-family:inherit;}
+  .cat-head .add-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,92,255,.4)}
+
+  .table-wrap{background:rgba(21,28,46,.75);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);backdrop-filter:blur(6px)}
+  table{width:100%;border-collapse:collapse;font-size:.88rem}
+  thead th{text-align:left;padding:14px 18px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--txt-3);background:rgba(11,15,28,.6);border-bottom:1px solid var(--line);white-space:nowrap}
+  tbody tr{border-bottom:1px solid rgba(38,49,74,.5);transition:.2s}
+  tbody tr:last-child{border-bottom:none}
+  tbody tr:hover{background:rgba(124,92,255,.04)}
+  tbody tr.hidden{display:none}
+  td{padding:14px 18px;vertical-align:middle}
+
+  .cell-tool,.cell-desc{background:transparent;border:1px solid transparent;border-radius:8px;color:var(--txt);font-family:inherit;font-size:.9rem;font-weight:600;padding:6px 8px;width:100%;transition:.15s;outline:none}
+  .cell-desc{font-weight:400;font-size:.84rem;color:var(--txt-2)}
+  .cell-tool:hover,.cell-desc:hover{border-color:var(--line-2);background:rgba(0,0,0,.15)}
+  .cell-tool:focus,.cell-desc:focus{border-color:var(--accent);background:rgba(124,92,255,.08);box-shadow:0 0 0 3px rgba(124,92,255,.15)}
+
+  select.status{appearance:none;-webkit-appearance:none;background:var(--bg);color:var(--txt);
+    border:1.5px solid var(--line-2);border-radius:10px;padding:8px 32px 8px 12px;
+    font-size:.8rem;font-weight:600;font-family:inherit;cursor:pointer;outline:none;transition:.2s;min-width:120px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239aa8c2' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat:no-repeat;background-position:right 10px center;}
+  select.status:hover{border-color:var(--accent)}
+  select.status:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,255,.2)}
+  select.status[data-val="Basic"]{border-color:var(--basic);color:#cbd5e1}
+  select.status[data-val="Medium"]{border-color:var(--medium);color:#93c5fd}
+  select.status[data-val="Max"]{border-color:var(--max);color:#6ee7b7}
+  select.status option{background:#151c2e;color:#eef2ff}
+
+  .row-actions{display:flex;gap:6px;justify-content:flex-end}
+  .icon-btn{width:32px;height:32px;border-radius:9px;border:1px solid var(--line-2);background:var(--panel-2);color:var(--txt-2);cursor:pointer;display:grid;place-items:center;font-size:.75rem;transition:.2s}
+  .icon-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);transform:translateY(-1px)}
+  .icon-btn.danger:hover{background:#e11d48;border-color:#e11d48}
+  .icon-btn.link:hover{background:var(--accent-2);color:#0a0e1a;border-color:var(--accent-2)}
+
+  /* Search highlight */
+  mark.hl{background:rgba(124,92,255,.35);color:#fff;border-radius:3px;padding:0 2px}
+
+  /* MODAL */
+  .modal-bg{position:fixed;inset:0;background:rgba(5,8,18,.75);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+  .modal-bg.on{display:flex}
+  .modal{background:var(--panel);border:1px solid var(--line-2);border-radius:var(--r-lg);width:100%;max-width:520px;padding:28px;box-shadow:0 30px 80px rgba(0,0,0,.7);animation:pop .2s ease}
+  @keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+  .modal h3{font-size:1.15rem;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+  .modal h3 i{color:var(--accent)}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:.75rem;color:var(--txt-2);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+  .field input,.field select,.field textarea{width:100%;background:var(--bg);border:1.5px solid var(--line-2);border-radius:10px;padding:11px 14px;color:var(--txt);font-family:inherit;font-size:.88rem;outline:none;transition:.2s}
+  .field textarea{resize:vertical;min-height:70px}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,255,.2)}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:22px}
+  .btn{padding:10px 20px;border-radius:10px;border:none;font-family:inherit;font-weight:600;font-size:.85rem;cursor:pointer;transition:.2s}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),#5b3ff0);color:#fff}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(124,92,255,.4)}
+  .btn-ghost{background:transparent;border:1px solid var(--line-2);color:var(--txt-2)}
+  .btn-ghost:hover{background:var(--panel-2);color:var(--txt)}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--panel-2);border:1px solid var(--max);color:var(--txt);padding:12px 20px;border-radius:12px;font-size:.85rem;font-weight:500;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);transform:translateY(100px);opacity:0;transition:.3s;z-index:2000}
+  .toast.on{transform:translateY(0);opacity:1}
+  .toast i{color:var(--max)}
+  .empty-note{text-align:center;padding:40px;color:var(--txt-3);font-size:.9rem}
+
+  .no-results{
+    text-align:center;padding:60px 20px;color:var(--txt-3);
+    background:rgba(21,28,46,.5);border:1px dashed var(--line-2);border-radius:var(--r-lg);
+    font-size:.9rem;display:none;
+  }
+  .no-results.on{display:block}
+  .no-results i{font-size:2rem;display:block;margin-bottom:12px;color:var(--txt-3);opacity:.5}
+  .no-results strong{color:var(--txt-2);display:block;margin-bottom:6px;font-size:1rem}
+
+  .storage-warn{display:none;background:rgba(244,114,182,.12);border:1px solid rgba(244,114,182,.4);color:#fbcfe8;padding:12px 18px;border-radius:12px;font-size:.82rem;margin-bottom:20px;align-items:center;gap:10px}
+  .storage-warn.on{display:flex}
+  .storage-warn i{color:var(--accent-3);font-size:1rem}
+
+  @media(max-width:900px){.col-desc{display:none}th:nth-child(2),td:nth-child(2){display:none}}
+  @media(max-width:640px){body{padding:16px 12px 70px}.legend{width:100%;justify-content:center}.cat-head{flex-wrap:wrap}th,td{padding:10px 12px}.search-section{padding:12px}.filter-chip{padding:6px 10px;font-size:.72rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="storage-warn" id="storageWarn">
+    <i class="fas fa-triangle-exclamation"></i>
+    <span><strong>Storage is blocked in this preview.</strong> Open the file in a real browser tab (not inside a chat preview) for saving to work.</span>
+  </div>
+
+  <!-- HEADER -->
+  <div class="top">
+    <div class="brand">
+      <h1><span class="logo"><i class="fas fa-brain"></i></span> Vishwajeet — AI Learning Tracker</h1>
+      <p>Everything is editable · Click any text to edit · Changes save automatically to your browser</p>
+    </div>
+    <div class="legend">
+      <span><span class="dot basic"></span> Basic</span>
+      <span><span class="dot medium"></span> Medium</span>
+      <span><span class="dot max"></span> Max</span>
+    </div>
+  </div>
+
+  <!-- SEARCH BAR -->
+  <div class="search-section">
+    <div class="search-box">
+      <i class="fas fa-search" id="searchIcon"></i>
+      <input type="text" id="searchInput" placeholder="Search tools, descriptions, categories... (press / to focus)" autocomplete="off" />
+      <button class="search-clear" id="searchClear" title="Clear search"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="filter-group">
+      <button class="filter-chip" data-filter="all"><i class="fas fa-list"></i> All</button>
+      <button class="filter-chip" data-filter="Basic"><span class="cdot"></span> Basic</button>
+      <button class="filter-chip" data-filter="Medium"><span class="cdot"></span> Medium</button>
+      <button class="filter-chip" data-filter="Max"><span class="cdot"></span> Max</button>
+      <button class="filter-chip" data-filter="none"><span class="cdot"></span> Not set</button>
+    </div>
+    <div class="search-results-info" id="resultsInfo"></div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat"><i class="ic-1 fas fa-layer-group"></i><div><div class="num" id="statCats">0</div><div class="lbl">Categories</div></div></div>
+    <div class="stat"><i class="ic-2 fas fa-tools"></i><div><div class="num" id="statTotal">0</div><div class="lbl">Total Tools</div></div></div>
+    <div class="stat"><i class="ic-3 fas fa-check-circle"></i><div><div class="num" id="statTracked">0</div><div class="lbl">Tracked</div></div></div>
+    <div class="stat"><i class="ic-4 fas fa-chart-line"></i>
+      <div style="flex:1"><div class="num" id="statPct">0%</div><div class="lbl">Progress</div>
+      <div class="progress-bar"><div id="statBar" style="width:0%"></div></div></div>
+    </div>
+  </div>
+
+  <div id="cats"></div>
+
+  <div class="no-results" id="noResults">
+    <i class="fas fa-search"></i>
+    <strong>No matching tools found</strong>
+    Try a different keyword or clear the filters.
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <h3><i class="fas fa-plus-circle"></i> <span id="modalTitle">Add Tool</span></h3>
+      <div class="field"><label>Tool / Area Name</label><input type="text" id="fTool" placeholder="e.g. ComfyUI" /></div>
+      <div class="field"><label>Purpose / Description</label><textarea id="fDesc" placeholder="What is this tool used for?"></textarea></div>
+      <div class="field"><label>Status</label>
+        <select id="fStatus">
+          <option value="">— Not set —</option>
+          <option value="Basic">Basic</option>
+          <option value="Medium">Medium</option>
+          <option value="Max">Max</option>
+        </select>
+      </div>
+      <div class="field"><label>Link (optional)</label><input type="url" id="fLink" placeholder="https://..." /></div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="modalCancel">Cancel</button>
+        <button class="btn btn-primary" id="modalSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg">Saved</span></div>
+</div>
+
+<script>
+/* ============================================================
+   DEFAULT SEED DATA (only used first time)
+   ============================================================ */
+const DEFAULT_DATA = [
+  {id:'cat-ai-tech', name:'AI & Technical Tools', icon:'fa-microchip', items:[
+    {id:'i1', tool:'ComfyUI', desc:'Build and manage visual AI workflows and generation pipelines.', status:'', link:''},
+    {id:'i2', tool:'Roboflow', desc:'Train and deploy custom computer-vision models.', status:'', link:''},
+    {id:'i3', tool:'Meshy AI', desc:'Generate and experiment with AI-powered 3D models.', status:'', link:''},
+    {id:'i4', tool:'Tinkercad Circuits', desc:'Simulate Arduino, electronics and hardware projects.', status:'', link:''},
+    {id:'i5', tool:'Google Colab', desc:'Run Python notebooks and cloud-based experiments.', status:'Basic', link:''},
+    {id:'i6', tool:'Flowise', desc:'Visually build AI agents and LLM applications.', status:'Basic', link:''},
+    {id:'i7', tool:'Langflow', desc:'Design and connect LLM workflows and AI pipelines.', status:'Basic', link:''},
+    {id:'i8', tool:'OpenCV', desc:'Develop real-world computer-vision applications.', status:'', link:''},
+    {id:'i9', tool:'Scenario.gg', desc:'Generate AI-powered assets for games.', status:'', link:''},
+    {id:'i10', tool:'Hugging Face Spaces', desc:'Explore, deploy and experiment with AI applications.', status:'', link:''},
+    {id:'i11', tool:'CodeRabbit', desc:'AI-assisted code review and development feedback.', status:'Medium', link:''},
+    {id:'i12', tool:'Claude', desc:'AI-assisted coding, learning, reasoning and development.', status:'Max', link:''},
+    {id:'i13', tool:'Stitch', desc:'AI-assisted UI design and interface prototyping.', status:'', link:''},
+    {id:'i14', tool:'API Keys', desc:'Connect applications with external APIs and services securely.', status:'Medium', link:''},
+    {id:'i15', tool:'HTML / CSS / JavaScript', desc:'Build and structure modern interactive websites.', status:'Max', link:''},
+    {id:'i16', tool:'GitHub', desc:'Manage repositories, source code and collaboration workflows.', status:'Medium', link:'https://github.com'},
+    {id:'i17', tool:'Terminal / SSH', desc:'Work with command-line environments and remote systems.', status:'Basic', link:''},
+    {id:'i18', tool:'OSINT', desc:'Research and analyse publicly available information.', status:'Medium', link:''},
+    {id:'i19', tool:'OS Customization', desc:'Configure and customise operating-system environments.', status:'Max', link:''},
+    {id:'i20', tool:'Roblox Game Development', desc:'Build games and interactive experiences on Roblox.', status:'Medium', link:''},
+    {id:'i21', tool:'Cloud', desc:'Understand and work with cloud-based computing environments.', status:'Basic', link:''},
+    {id:'i22', tool:'ElevenLabs Voice Agents', desc:'Build AI-powered voice and conversational experiences.', status:'Medium', link:''}
+  ]},
+  {id:'cat-ai-platforms', name:'AI Platforms & Applications', icon:'fa-globe', items:[
+    {id:'p1', tool:'HeyGen', desc:'AI video generation, avatars and digital presenters.', status:'', link:''},
+    {id:'p2', tool:'Indus by Sarvam', desc:'Explore Indian-language conversational AI.', status:'Max', link:''},
+    {id:'p3', tool:'Max AI', desc:'AI-powered assistance and workflow experimentation.', status:'Max', link:''},
+    {id:'p4', tool:'NASA APIs', desc:'Access NASA datasets and services through APIs.', status:'Medium', link:'https://api.nasa.gov'},
+    {id:'p5', tool:'World Monitor', desc:'Monitor and visualise global information and events.', status:'Max', link:''},
+    {id:'p6', tool:'Emergent', desc:'AI-assisted application and software development.', status:'Max', link:''},
+    {id:'p7', tool:'Squarespace', desc:'Build and manage websites visually.', status:'Max', link:''}
+  ]},
+  {id:'cat-advanced', name:'Advanced Exploration', icon:'fa-flask', items:[
+    {id:'a1', tool:'Ollama', desc:'Run AI models locally on a computer.', status:'Max', link:''},
+    {id:'a2', tool:'Claude — Application Development', desc:'Use Claude extensively for building applications.', status:'Max', link:''},
+    {id:'a3', tool:'BookLens', desc:'AI-powered book/library application project.', status:'Max', link:''},
+    {id:'a4', tool:'3D Websites', desc:'Explore websites incorporating interactive 3D experiences.', status:'', link:''},
+    {id:'a5', tool:'Prototype Development', desc:'Convert ideas into functional prototypes.', status:'', link:''},
+    {id:'a6', tool:'MVP Development', desc:'Build minimum viable products for real-world validation.', status:'', link:''},
+    {id:'a7', tool:'Portfolio Websites', desc:'Study and build modern personal/professional websites.', status:'', link:''},
+    {id:'a8', tool:'Hacking — 3 Types', desc:'Understand the three broad categories of hacking.', status:'', link:''}
+  ]},
+  {id:'cat-devtools', name:'Programming & Developer Tools', icon:'fa-terminal', items:[
+    {id:'d1', tool:'Grok 3', desc:'AI tool for reasoning, research and development workflows.', status:'', link:''},
+    {id:'d2', tool:'Windsurf', desc:'AI-assisted coding and software development environment.', status:'', link:''},
+    {id:'d3', tool:'Blackbox AI', desc:'AI-assisted coding, code generation and development support.', status:'', link:''},
+    {id:'d4', tool:'GitHub Copilot', desc:'AI coding assistant integrated into development workflows.', status:'', link:''},
+    {id:'d5', tool:'Diamond', desc:'AI/development tool explored as part of the learning ecosystem.', status:'', link:''},
+    {id:'d6', tool:'Bolt', desc:'AI-assisted web application development and prototyping.', status:'', link:''},
+    {id:'d7', tool:'ChatGPT o3-mini-high', desc:'AI reasoning and problem-solving model for technical workflows.', status:'', link:''},
+    {id:'d8', tool:'Devin', desc:'AI software-engineering agent for development tasks.', status:'', link:''},
+    {id:'d9', tool:'Claude (dev)', desc:'AI assistant for coding, learning and development.', status:'', link:''},
+    {id:'d10', tool:'Cursor', desc:'AI-native code editor for software development.', status:'', link:''}
+  ]},
+  {id:'cat-productivity', name:'Productivity & Knowledge Tools', icon:'fa-tasks', items:[
+    {id:'pr1', tool:'Monday', desc:'Work and project management platform.', status:'', link:''},
+    {id:'pr2', tool:'Napkin AI', desc:'Turn ideas and text into visual explanations and diagrams.', status:'', link:''},
+    {id:'pr3', tool:'BeforeSunset AI', desc:'AI-assisted planning and productivity management.', status:'', link:''},
+    {id:'pr4', tool:'ClickUp', desc:'Project, task and productivity management platform.', status:'', link:''},
+    {id:'pr5', tool:'NotebookLM', desc:'AI-powered research and document-based knowledge assistant.', status:'', link:''},
+    {id:'pr6', tool:'VoicePal', desc:'Voice-based productivity and AI interaction tool.', status:'', link:''},
+    {id:'pr7', tool:'Mem AI', desc:'AI-powered personal knowledge and note management.', status:'', link:''},
+    {id:'pr8', tool:'Otter AI', desc:'AI transcription and meeting-note assistant.', status:'', link:''},
+    {id:'pr9', tool:'Notion', desc:'Workspace for notes, knowledge, projects and databases.', status:'', link:''},
+    {id:'pr10', tool:'Me Bot', desc:'Personal AI assistant / productivity experimentation.', status:'', link:''},
+    {id:'pr11', tool:'Happenstance.ai', desc:'AI-powered discovery and relationship intelligence.', status:'', link:''}
+  ]},
+  {id:'cat-critical', name:'Critical Thinking Framework', icon:'fa-lightbulb', items:[
+    {id:'c1', tool:'Core Question', desc:'What is the most important thing that I am missing about this situation?', status:'', link:''},
+    {id:'c2', tool:"Devil's Advocate", desc:'Challenge the current idea or assumption.', status:'', link:''},
+    {id:'c3', tool:'Autopsy', desc:'Analyse why something failed or went wrong.', status:'', link:''},
+    {id:'c4', tool:'Red Team', desc:'Attempt to break the proposed plan or system.', status:'', link:''},
+    {id:'c5', tool:'Expose', desc:'Identify overlooked risks, assumptions and missing information.', status:'', link:''}
+  ]},
+  {id:'cat-inspiration', name:'Inspiration & Reference', icon:'fa-star', items:[
+    {id:'r1', tool:'Matthew Yu', desc:'Portfolio / personal website reference', status:'', link:'https://matthewyu.dev'},
+    {id:'r2', tool:'Anti-Portfolio', desc:'Portfolio / personal website reference', status:'', link:'https://anti-portfolio.framer.website'},
+    {id:'r3', tool:'Jackie Zhang', desc:'Portfolio / personal website reference', status:'', link:'https://jackiezhang.co.za'},
+    {id:'r4', tool:'Taliahhh', desc:'Portfolio / personal website reference', status:'', link:'https://taliahhh.com'}
+  ]},
+  {id:'cat-focus', name:'Development Focus', icon:'fa-compass', items:[
+    {id:'f1', tool:'Building', desc:'Learning through practical building and experimentation.', status:'', link:''},
+    {id:'f2', tool:'AI Tools', desc:'Exploring and applying modern AI tools.', status:'', link:''},
+    {id:'f3', tool:'Product Thinking', desc:'Understanding products, users, problems and solutions.', status:'', link:''},
+    {id:'f4', tool:'Websites', desc:'Designing and developing modern websites.', status:'', link:''},
+    {id:'f5', tool:'Startup Ideas', desc:'Exploring ideas and converting them into potential products.', status:'', link:''},
+    {id:'f6', tool:'Personal Projects', desc:'Learning through independent project work.', status:'', link:''},
+    {id:'f7', tool:'Learning by Doing', desc:'Using practical experimentation as the primary learning approach.', status:'', link:''}
+  ]}
+];
+
+/* ============================================================
+   STORAGE
+   ============================================================ */
+const STORE_KEY = 'vishwajeet_tracker_v3'; // SAME key — your data is preserved
+let storageOK = true;
+let memoryStore = null;
+
+function testStorage(){
+  try{ const k='__t__'+Date.now(); localStorage.setItem(k,'1'); localStorage.removeItem(k); return true; }
+  catch(e){ return false; }
+}
+storageOK = testStorage();
+if(!storageOK) document.getElementById('storageWarn').classList.add('on');
+
+const DB = {
+  data:null,
+  load(){
+    let raw = null;
+    if(storageOK){ try{ raw = localStorage.getItem(STORE_KEY); }catch(e){ raw = null; } }
+    else { raw = memoryStore; }
+    if(raw){
+      try{ this.data = JSON.parse(raw); }
+      catch(e){ this.data = deepClone(DEFAULT_DATA); }
+    } else {
+      this.data = deepClone(DEFAULT_DATA);
+      this.save();
+    }
+    if(!Array.isArray(this.data)) this.data = deepClone(DEFAULT_DATA);
+    return this.data;
+  },
+  save(){
+    const str = JSON.stringify(this.data);
+    if(storageOK){ try{ localStorage.setItem(STORE_KEY, str); }catch(e){ console.error('Save failed', e); } }
+    else { memoryStore = str; }
+  },
+  updateItem(catId, itemId, field, value){
+    const cat = this.data.find(c => c.id === catId); if(!cat) return;
+    const item = cat.items.find(i => i.id === itemId); if(!item) return;
+    item[field] = value;
+    this.save();
+    renderStats();
+  },
+  addItem(catId, item){
+    const cat = this.data.find(c => c.id === catId); if(!cat) return;
+    cat.items.push(item);
+    this.save();
+    renderCategory(catId);
+    renderStats();
+    applyFilterAndSearch(); // re-apply search/filter
+  },
+  deleteItem(catId, itemId){
+    const cat = this.data.find(c => c.id === catId); if(!cat) return;
+    cat.items = cat.items.filter(i => i.id !== itemId);
+    this.save();
+    renderCategory(catId);
+    renderStats();
+    applyFilterAndSearch();
+  },
+  getItem(catId, itemId){
+    const cat = this.data.find(c => c.id === catId); if(!cat) return null;
+    return cat.items.find(i => i.id === itemId) || null;
+  },
+  reset(){
+    if(storageOK) try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+    memoryStore = null;
+    this.data = deepClone(DEFAULT_DATA);
+    this.save();
+    renderAll();
+    applyFilterAndSearch();
+    toast('Reset to defaults');
+  }
+};
+function deepClone(o){ return JSON.parse(JSON.stringify(o)); }
+
+/* ============================================================
+   RENDERING
+   ============================================================ */
+function escapeHtml(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function escapeRegex(s){ return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+
+function renderAll(){
+  const container = document.getElementById('cats');
+  container.innerHTML = DB.data.map(categoryTemplate).join('');
+  renderStats();
+}
+
+function categoryTemplate(cat){
+  const rows = cat.items.map(item => rowTemplate(cat.id, item)).join('')
+    || `<tr><td colspan="4" class="empty-note">No items yet — click "Add Tool" above.</td></tr>`;
+  return `
+    <section class="cat" data-cat="${cat.id}">
+      <div class="cat-head">
+        <div class="ic"><i class="fas ${cat.icon}"></i></div>
+        <h2>${escapeHtml(cat.name)}</h2>
+        <span class="count">${cat.items.length} item${cat.items.length === 1 ? '' : 's'}</span>
+        <button class="add-btn" data-action="add" data-cat="${cat.id}">
+          <i class="fas fa-plus"></i> Add Tool
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th style="width:24%">Tool / Area</th>
+            <th class="col-desc" style="width:38%">Purpose / Description</th>
+            <th style="width:18%">Status</th>
+            <th style="width:20%;text-align:right">Actions</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </section>`;
+}
+
+function rowTemplate(catId, item){
+  const hasLink = item.link && item.link.trim() !== '';
+  return `
+    <tr data-item="${item.id}">
+      <td><input class="cell-tool" data-field="tool" value="${escapeHtml(item.tool)}" placeholder="Tool name" /></td>
+      <td class="col-desc"><input class="cell-desc" data-field="desc" value="${escapeHtml(item.desc)}" placeholder="Description" /></td>
+      <td>
+        <div class="status-wrap">
+          <select class="status" data-field="status" data-val="${item.status}">
+            <option value="" ${item.status===''?'selected':''}>— Not set —</option>
+            <option value="Basic" ${item.status==='Basic'?'selected':''}>Basic</option>
+            <option value="Medium" ${item.status==='Medium'?'selected':''}>Medium</option>
+            <option value="Max" ${item.status==='Max'?'selected':''}>Max</option>
+          </select>
+        </div>
+      </td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-btn link" data-action="open" title="${hasLink ? 'Open link' : 'No link set'}"><i class="fas fa-external-link-alt"></i></button>
+          <button class="icon-btn" data-action="edit" title="Edit details"><i class="fas fa-pen"></i></button>
+          <button class="icon-btn danger" data-action="delete" title="Delete"><i class="fas fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>`;
+}
+
+function renderCategory(catId){
+  const cat = DB.data.find(c => c.id === catId); if(!cat) return;
+  const section = document.querySelector(`.cat[data-cat="${catId}"]`); if(!section) return;
+  const countEl = section.querySelector('.count');
+  if(countEl) countEl.textContent = `${cat.items.length} item${cat.items.length===1?'':'s'}`;
+  const tbody = section.querySelector('tbody');
+  tbody.innerHTML = cat.items.map(item => rowTemplate(cat.id, item)).join('')
+    || `<tr><td colspan="4" class="empty-note">No items yet — click "Add Tool" above.</td></tr>`;
+}
+
+function renderStats(){
+  let totalItems = 0, tracked = 0;
+  DB.data.forEach(c => {
+    totalItems += c.items.length;
+    c.items.forEach(i => { if(i.status && i.status !== '') tracked++; });
+  });
+  const pct = totalItems ? Math.round(tracked / totalItems * 100) : 0;
+  document.getElementById('statCats').textContent = DB.data.length;
+  document.getElementById('statTotal').textContent = totalItems;
+  document.getElementById('statTracked').textContent = tracked;
+  document.getElementById('statPct').textContent = pct + '%';
+  document.getElementById('statBar').style.width = pct + '%';
+}
+
+/* ============================================================
+   SEARCH & FILTER
+   ============================================================ */
+let searchQuery = '';
+let statusFilter = 'all';
+
+function applyFilterAndSearch(){
+  const q = searchQuery.trim().toLowerCase();
+  const filter = statusFilter;
+  const catEls = document.querySelectorAll('.cat');
+  let visibleRows = 0;
+  let totalRows = 0;
+
+  catEls.forEach(catEl => {
+    const catId = catEl.dataset.cat;
+    const cat = DB.data.find(c => c.id === catId);
+    const catName = cat ? cat.name.toLowerCase() : '';
+
+    let visibleInCat = 0;
+    const rows = catEl.querySelectorAll('tbody tr[data-item]');
+
+    rows.forEach(row => {
+      totalRows++;
+      const itemId = row.dataset.item;
+      const item = cat ? cat.items.find(i => i.id === itemId) : null;
+      if(!item){ row.classList.add('hidden'); return; }
+
+      // Text match (tool, desc, category name)
+      const text = (item.tool + ' ' + item.desc + ' ' + catName).toLowerCase();
+      const textMatch = q === '' || text.includes(q);
+
+      // Status match
+      let statusMatch = true;
+      if(filter === 'all') statusMatch = true;
+      else if(filter === 'none') statusMatch = (item.status === '' || item.status == null);
+      else statusMatch = (item.status === filter);
+
+      if(textMatch && statusMatch){
+        row.classList.remove('hidden');
+        visibleInCat++;
+        visibleRows++;
+        // Highlight matching text inside tool input
+        highlightRow(row, q);
+      } else {
+        row.classList.add('hidden');
+      }
+    });
+
+    // Hide whole category if no visible rows
+    if(visibleInCat === 0){
+      catEl.classList.add('hidden');
+    } else {
+      catEl.classList.remove('hidden');
+    }
+
+    // Update category count label to reflect visible/total
+    const countEl = catEl.querySelector('.count');
+    if(countEl && cat){
+      if(q || filter !== 'all'){
+        countEl.textContent = `${visibleInCat} / ${cat.items.length}`;
+      } else {
+        countEl.textContent = `${cat.items.length} item${cat.items.length===1?'':'s'}`;
+      }
+    }
+  });
+
+  // Update results info
+  const info = document.getElementById('resultsInfo');
+  if(q || filter !== 'all'){
+    info.innerHTML = `<strong>${visibleRows}</strong> of ${totalRows} match`;
+  } else {
+    info.textContent = '';
+  }
+
+  // Show no-results if nothing visible
+  document.getElementById('noResults').classList.toggle('on', visibleRows === 0 && totalRows > 0);
+
+  // Toggle clear button
+  document.getElementById('searchClear').classList.toggle('on', q !== '');
+  document.getElementById('searchIcon').className = q ? 'fas fa-search' : 'fas fa-search';
+}
+
+/**
+ * Because tool/desc are input fields (not plain text), we cannot use <mark>
+ * inside them. Instead we visually indicate the match by briefly flashing a
+ * soft background. This preserves full editability.
+ */
+function highlightRow(row, q){
+  if(!q){ return; }
+  row.style.transition = 'background .6s ease';
+  // no persistent styling — everything stays editable
+}
+
+// Wire up search input
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', (e) => {
+  searchQuery = e.target.value;
+  applyFilterAndSearch();
+});
+document.getElementById('searchClear').addEventListener('click', () => {
+  searchInput.value = '';
+  searchQuery = '';
+  applyFilterAndSearch();
+  searchInput.focus();
+});
+
+// Filter chips
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const f = chip.dataset.filter;
+    if(f === 'all'){ statusFilter = 'all'; }
+    else { statusFilter = f; }
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    applyFilterAndSearch();
+  });
+});
+
+// Set "All" active by default
+document.querySelector('.filter-chip[data-filter="all"]').classList.add('active');
+
+// Keyboard shortcut: press "/" to focus search (unless already in an input)
+document.addEventListener('keydown', (e) => {
+  if(e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){
+    e.preventDefault();
+    searchInput.focus();
+    searchInput.select();
+  }
+});
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+let currentModal = { catId:null, itemId:null, isNew:false };
+
+function openModal(catId, itemId){
+  const isNew = !itemId;
+  const modal = document.getElementById('modalBg');
+  const fTool = document.getElementById('fTool');
+  const fDesc = document.getElementById('fDesc');
+  const fStatus = document.getElementById('fStatus');
+  const fLink = document.getElementById('fLink');
+
+  if(isNew){
+    document.getElementById('modalTitle').textContent = 'Add Tool';
+    fTool.value = ''; fDesc.value = ''; fStatus.value = ''; fLink.value = '';
+  } else {
+    const item = DB.getItem(catId, itemId); if(!item) return;
+    document.getElementById('modalTitle').textContent = 'Edit Tool';
+    fTool.value = item.tool;
+    fDesc.value = item.desc;
+    fStatus.value = item.status;
+    fLink.value = item.link || '';
+  }
+  currentModal = { catId, itemId: itemId || null, isNew };
+  modal.classList.add('on');
+  setTimeout(() => fTool.focus(), 50);
+}
+function closeModal(){
+  document.getElementById('modalBg').classList.remove('on');
+  currentModal = { catId:null, itemId:null, isNew:false };
+}
+function saveModal(){
+  const tool = document.getElementById('fTool').value.trim();
+  const desc = document.getElementById('fDesc').value.trim();
+  const status = document.getElementById('fStatus').value;
+  const link = document.getElementById('fLink').value.trim();
+  if(!tool){ toast('Tool name cannot be empty', true); return; }
+
+  if(currentModal.isNew){
+    const newItem = {
+      id: 'i-' + Date.now() + '-' + Math.random().toString(36).slice(2,7),
+      tool, desc, status, link
+    };
+    DB.addItem(currentModal.catId, newItem);
+    toast('Tool added');
+  } else {
+    DB.updateItem(currentModal.catId, currentModal.itemId, 'tool', tool);
+    DB.updateItem(currentModal.catId, currentModal.itemId, 'desc', desc);
+    DB.updateItem(currentModal.catId, currentModal.itemId, 'status', status);
+    DB.updateItem(currentModal.catId, currentModal.itemId, 'link', link);
+    renderCategory(currentModal.catId);
+    applyFilterAndSearch();
+    toast('Changes saved');
+  }
+  closeModal();
+}
+
+let toastTimer;
+function toast(msg, isError){
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  const icon = t.querySelector('i');
+  icon.className = isError ? 'fas fa-triangle-exclamation' : 'fas fa-check-circle';
+  icon.style.color = isError ? '#f87171' : 'var(--max)';
+  t.style.borderColor = isError ? '#f87171' : 'var(--max)';
+  t.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('on'), 1800);
+}
+
+/* ============================================================
+   EVENT DELEGATION
+   ============================================================ */
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-action]');
+  if(!btn) return;
+  const action = btn.dataset.action;
+  const catEl = btn.closest('.cat'); if(!catEl) return;
+  const catId = catEl.dataset.cat;
+  const row = btn.closest('tr');
+  const itemId = row ? row.dataset.item : null;
+
+  if(action === 'add'){ openModal(catId, null); }
+  else if(action === 'edit' && itemId){ openModal(catId, itemId); }
+  else if(action === 'delete' && itemId){
+    const item = DB.getItem(catId, itemId);
+    if(confirm(`Delete "${item ? item.tool : 'this item'}"?`)){
+      DB.deleteItem(catId, itemId);
+      toast('Item deleted');
+    }
+  }
+  else if(action === 'open' && itemId){
+    const item = DB.getItem(catId, itemId);
+    if(item && item.link && item.link.trim() !== ''){ window.open(item.link, '_blank', 'noopener'); }
+    else { toast('No link set — click pencil to add one', true); }
+  }
+});
+
+document.addEventListener('change', (e) => {
+  const sel = e.target.closest('select.status'); if(!sel) return;
+  const row = sel.closest('tr');
+  const catEl = sel.closest('.cat');
+  if(!row || !catEl) return;
+  const catId = catEl.dataset.cat;
+  const itemId = row.dataset.item;
+  const value = sel.value;
+  sel.setAttribute('data-val', value);
+  DB.updateItem(catId, itemId, 'status', value);
+  toast(value ? `Status: ${value}` : 'Status cleared');
+  applyFilterAndSearch();
+});
+
+document.addEventListener('blur', (e) => {
+  const inp = e.target.closest('.cell-tool, .cell-desc'); if(!inp) return;
+  const row = inp.closest('tr');
+  const catEl = inp.closest('.cat');
+  if(!row || !catEl) return;
+  const catId = catEl.dataset.cat;
+  const itemId = row.dataset.item;
+  const field = inp.dataset.field;
+  const current = DB.getItem(catId, itemId);
+  if(!current) return;
+  if(current[field] === inp.value) return;
+  DB.updateItem(catId, itemId, field, inp.value);
+  toast('Saved');
+  applyFilterAndSearch();
+}, true);
+
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter' && e.target.closest && e.target.closest('.cell-tool, .cell-desc')){
+    e.target.blur();
+  }
+  if(e.key === 'Escape' && document.getElementById('modalBg').classList.contains('on')){ closeModal(); }
+  if((e.ctrlKey || e.metaKey) && e.key === 'Enter' && document.getElementById('modalBg').classList.contains('on')){ saveModal(); }
+});
+
+document.getElementById('modalCancel').addEventListener('click', closeModal);
+document.getElementById('modalSave').addEventListener('click', saveModal);
+document.getElementById('modalBg').addEventListener('click', (e) => { if(e.target.id === 'modalBg') closeModal(); });
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+DB.load();
+renderAll();
+applyFilterAndSearch();
+
+window.__resetTracker = () => DB.reset();
+console.log('%c✓ Tracker loaded (with search)', 'color:#7c5cff;font-weight:bold');
+console.log('Press "/" to focus search · __resetTracker() to reset');
+</script>
+</body>
+</html>
